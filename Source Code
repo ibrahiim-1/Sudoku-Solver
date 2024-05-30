@@ -1,0 +1,228 @@
+#include <iostream>
+#include<Windows.h>
+#include<conio.h>
+using namespace std;
+
+#define N 9
+
+void welcomePage() {
+	system("cls");
+	Sleep(20);
+	for (int i = 1; i < 135; i++)
+	{
+		if (i < 80)
+		{
+			Sleep(5);
+		}
+		else
+		{
+			Sleep(5);
+		}
+		cout << "_";
+	}
+	system("cls");
+	string ggg;
+	ggg = "SUDOKU SOLVER";
+	cout << "\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t   ==================================\n\n\n\t\t\t\t\t\t\t     ";
+	for (int i = 0; i <= ggg.length(); i++) {
+		cout << ggg[i];
+		Sleep(5);
+	}
+	cout << "\n\n\n\t\t\t\t\t\t   ==================================";
+	string abc = "Press any key to start!";
+	cout << "\n\n\t\t\t\t\t\t\t";
+	for (int i = 0; i <= abc.length(); i++) {
+		cout << abc[i];
+		Sleep(5);
+	}
+	_getch();
+	system("cls");
+	cout << "\n\n\n\n\n\n\n\n\n\n";
+	cout << "\t\t\t\t\t\t==================================";
+	cout << "\n\t\t\t\t\t\t==================================";
+	cout << "\n\n\n\t\t\t\t\t\t\t1. Solve your Sudoku" << endl;
+	cout << "\t\t\t\t\t\t\t2. Solve example Sudoku" << endl;
+	cout << "\t\t\t\t\t\t\t3. Exit" << endl;
+	cout << "\n\n\t\t\t\t\t\t==================================";
+	cout << "\n\t\t\t\t\t\t==================================\n\n\n";
+
+
+};
+
+void print(int arr[N][N])
+{
+	cout << "\n\n";
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+			cout << "  " << arr[i][j] << " ";
+		cout << endl;
+	}
+}
+
+// Checks whether it will be 
+// legal to assign num to the
+// given row, col
+bool isSafe(int matrix[N][N], int row, int col, int num)
+{
+	// Check if we find the same num 
+	// in the similar row , we
+	// return false
+	for (int x = 0; x <= 8; x++)
+		if (matrix[row][x] == num)
+			return false;
+
+	// Check if we find the same num in 
+	// the similar column , we
+	// return false
+	for (int x = 0; x <= 8; x++)
+		if (matrix[x][col] == num)
+			return false;
+
+	// Check if we find the same num in 
+	// the particular 3*3 matrix,
+	// we return false
+	int startRow = row - row % 3,
+		startCol = col - col % 3;
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			if (matrix[i + startRow][j + startCol] == num)
+				return false;
+
+	return true;
+}
+
+/* Takes a partially filled-in matrix and attempts
+to assign values to all unassigned locations in
+such a way to meet the requirements for
+Sudoku solution (non-duplication across rows,
+columns, and boxes) */
+bool solveSudoku(int matrix[N][N], int row, int col)
+{
+	// Check if we have reached the 8th 
+	// row and 9th column (0
+	// indexed matrix) , we are 
+	// returning true to avoid
+	// further backtracking
+	if (row == N - 1 && col == N)
+	{
+		return true;
+	}
+	// Check if column value becomes 9, 
+	// we move to next row and
+	// column start from 0
+	if (col == N) {
+		row++;
+		col = 0;
+	}
+
+	// Check if the current position of 
+	// the matrix already contains
+	// value >0, we iterate for next column
+	if (matrix[row][col] > 0)
+		return solveSudoku(matrix, row, col + 1);
+
+	for (int num = 1; num <= N; num++)
+	{
+
+		// Check if it is safe to place 
+		// the num (1-9) in the
+		// given row ,col ->we 
+		// move to next column
+		if (isSafe(matrix, row, col, num))
+		{
+			matrix[row][col] = num;
+
+			// Checking for next possibility with next column
+			if (solveSudoku(matrix, row, col + 1))
+				return true;
+		}
+
+		// Removing the assigned num , 
+		// since our assumption
+		// was wrong , and we go for 
+		// next assumption with
+		// diff num value
+		matrix[row][col] = 0;
+	}
+	return false;
+}
+
+// Driver Code
+int main()
+{
+	welcomePage();
+	int a;
+	cin >> a;
+	system("cls");
+
+	switch (a) {
+	case 1:
+		cout << "\n\nEnter your Sudoku. Enter '0' in place of unsolved grids!\nEnter Values from 0-9\n";
+		int matrix1[N][N], a;
+		for (int i = 0; i < N; i++) {
+			cout << "\n\nEnter Row " << i + 1 << ":\n";
+			for (int j = 0; j < N; j++) {
+			p:
+				cin >> a;
+				matrix1[i][j] = a;
+				if (a < 0 || a > 9) {
+					cout << "Wrong value Entered!\nEnter value again(0-9):";
+					goto p;
+				}
+			}
+			_getch();
+		}
+		system("cls");
+		cout << "\n\nYour entered Sudoku is:\n";
+		print(matrix1);
+		_getch();
+
+		if (solveSudoku(matrix1, 0, 0))
+		{
+			cout << "\n\n Solved Sudoku:\n";
+			print(matrix1);
+			cout << "\n\nPress any key to exit the program!";
+			_getch();
+			exit;
+		}
+		else
+			cout << "No solution exists " << endl;
+		break;
+
+	case 2:
+		int matrix2[N][N] = {
+
+		{ 3, 0, 6, 5, 0, 8, 4, 0, 0 },
+		{ 5, 2, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 8, 7, 0, 0, 0, 0, 3, 1 },
+		{ 0, 0, 3, 0, 1, 0, 0, 8, 0 },
+		{ 9, 0, 0, 8, 6, 3, 0, 0, 5 },
+		{ 0, 5, 0, 0, 9, 0, 6, 0, 0 },
+		{ 1, 3, 0, 0, 0, 0, 2, 5, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 7, 4 },
+		{ 0, 0, 5, 2, 0, 6, 3, 0, 0 }
+		};
+
+		system("cls");
+		cout << "\n\nExample Sudoku is:";
+		print(matrix2);
+		_getch();
+
+		if (solveSudoku(matrix2, 0, 0))
+		{
+			cout << "\n\nSolved Sudoku is:";
+			print(matrix2);
+			cout << "\n\nPress any key to exit the program!";
+			_getch();
+			exit;
+		}
+		else
+		{
+			cout << "No solution exists " << endl;
+		}
+		break;
+	}
+	return 0;
+}
